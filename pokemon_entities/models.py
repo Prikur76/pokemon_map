@@ -9,3 +9,11 @@ class Pokemon(models.Model):
         return self.title    # noqa F405
 
 
+class PokemonEntity(models.Model):
+    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE)
+    latitude = models.FloatField(verbose_name='Lat.')
+    longitude = models.FloatField(verbose_name='Lon.')
+
+
+    def __str__(self):
+        return self.latitude, self.longitude
