@@ -14,6 +14,5 @@ class PokemonEntity(models.Model):
     latitude = models.FloatField(verbose_name='Lat.', null=False, default=0)
     longitude = models.FloatField(verbose_name='Lon.', null=False, default=0)
 
-
     def __str__(self):
         return self.latitude, self.longitude
