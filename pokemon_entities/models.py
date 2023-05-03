@@ -16,7 +16,7 @@ class Pokemon(models.Model):
         blank=True, null=True
     )
     image = models.ImageField(
-        upload_to='media/pokemons',
+        upload_to='pokemons',
         blank=True, null=True
     )
     img_url = models.URLField(
