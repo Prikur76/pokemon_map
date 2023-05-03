@@ -2,14 +2,29 @@ from django.db import models
 
 
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200)
+    title_ru = models.CharField(
+        max_length=200, default='Покемон'
+    )
+    title_en = models.CharField(
+        max_length=200, default='Pokemon'
+    )
+    title_jp = models.CharField(
+        max_length=200, default='ポケモン'
+    )
+    description = models.TextField(
+        verbose_name='Описание',
+        blank=True, null=True
+    )
     image = models.ImageField(
         upload_to='media/pokemons',
         blank=True, null=True
     )
+    img_url = models.URLField(
+        blank=True, null=True
+    )
 
     def __str__(self):
-        return self.title
+        return self.title_ru
 
 
 class PokemonEntity(models.Model):
@@ -51,6 +66,18 @@ class PokemonEntity(models.Model):
         blank=True, null=True,
         verbose_name='Stamina',
     )
+    next_evolutions = models.ForeignKey(
+        Pokemon,
+        on_delete=models.CASCADE,
+        related_name='next_evolutions',
+        blank=True, null=True
+    )
+    previous_evolutions = models.ForeignKey(
+        Pokemon,
+        on_delete=models.CASCADE,
+        related_name='previous_evolutions',
+        blank=True, null=True
+    )
 
     def __str__(self):
-        return self.pokemon.title
+        return self.pokemon.title_ru
