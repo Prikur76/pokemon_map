@@ -22,6 +22,18 @@ class Pokemon(models.Model):
     img_url = models.URLField(
         blank=True, null=True
     )
+    next_evolutions = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='next_evolution',
+        blank=True, null=True
+    )
+    previous_evolutions = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        related_name='previous_evolution',
+        blank=True, null=True
+    )
 
     def __str__(self):
         return self.title_ru
@@ -65,18 +77,6 @@ class PokemonEntity(models.Model):
     stamina = models.IntegerField(
         blank=True, null=True,
         verbose_name='Stamina',
-    )
-    next_evolutions = models.ForeignKey(
-        Pokemon,
-        on_delete=models.CASCADE,
-        related_name='next_evolutions',
-        blank=True, null=True
-    )
-    previous_evolutions = models.ForeignKey(
-        Pokemon,
-        on_delete=models.CASCADE,
-        related_name='previous_evolutions',
-        blank=True, null=True
     )
 
     def __str__(self):

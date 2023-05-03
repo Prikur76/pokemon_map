@@ -89,6 +89,6 @@ def show_pokemon(request, pokemon_id):
         request, 'pokemon.html',
         context={
             'map': folium_map._repr_html_(),
-            'pokemon': pokemon
+            'pokemon': requested_pokemon
         }
     )
