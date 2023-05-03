@@ -20,8 +20,6 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
     )
     folium.Marker(
         [lat, lon],
-        # Warning! `tooltip` attribute is disabled intentionally
-        # to fix strange folium cyrillic encoding bug
         icon=icon,
     ).add_to(folium_map)
 
@@ -66,16 +64,32 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    pokemons = Pokemon.objects.filter(id=pokemon_id)
+    pokemon = Pokemon.objects.get(id=pokemon_id)
     pokemon_entities = PokemonEntity.objects.filter(pokemon_id=pokemon_id)
-
-    for pokemon in pokemons:
-        if pokemon.id == int(pokemon_id):
-            requested_pokemon = pokemon
-            break
-        else:
-            return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
-
+    if pokemon.id == int(pokemon_id):
+        previous_evolution = pokemon.previous_evolution
+        next_evolution = pokemon.previous_evolutions.all().first()
+    else:
+        return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
+    requested_pokemon = {}
+    requested_pokemon['pokemon_id'] = pokemon.id
+    requested_pokemon['title_ru'] = pokemon.title_ru
+    requested_pokemon['title_en'] = pokemon.title_en
+    requested_pokemon['title_jp'] = pokemon.title_jp
+    requested_pokemon['description'] = pokemon.description
+    requested_pokemon['img_url'] = pokemon.image.url
+    if previous_evolution:
+        requested_pokemon['previous_evolution'] = {
+            'title_ru': previous_evolution.title_ru,
+            'pokemon_id': previous_evolution.id,
+            'img_url': previous_evolution.image.url
+        }
+    if next_evolution:
+        requested_pokemon['next_evolution'] = {
+            'title_ru': next_evolution.title_ru,
+            'pokemon_id': next_evolution.id,
+            'img_url': next_evolution.image.url
+        }
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemon_entities:
         add_pokemon(
@@ -86,7 +100,8 @@ def show_pokemon(request, pokemon_id):
         )
 
     return render(
-        request, 'pokemon.html',
+        request,
+        'pokemon.html',
         context={
             'map': folium_map._repr_html_(),
             'pokemon': requested_pokemon
