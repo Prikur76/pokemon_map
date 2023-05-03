@@ -62,7 +62,6 @@ class PokemonEntity(models.Model):
         default=timezone.now
     )
     disappeared_at = models.DateTimeField(
-        blank=True,
         verbose_name='Исчезает',
         default=timezone.now
     )
