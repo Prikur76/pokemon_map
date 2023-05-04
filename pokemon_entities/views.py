@@ -55,9 +55,8 @@ def show_all_pokemons(request):
                 }
             )
     pokemons_without_duplicates = map(
-        dict, set(
-            tuple(sorted(pokemon.items())) for pokemon in pokemons_on_page
-        )
+        dict,
+        set(tuple(sorted(pokemon.items())) for pokemon in pokemons_on_page)
     )
     return render(
         request,

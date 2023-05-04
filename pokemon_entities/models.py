@@ -20,7 +20,8 @@ class Pokemon(models.Model):
     )
     description = models.TextField(
         verbose_name='Описание',
-        blank=True, null=True
+        blank=True, null=True,
+        default='существо Вселенной Покемон Гоу'
     )
     image = models.ImageField(
         upload_to='pokemons',
