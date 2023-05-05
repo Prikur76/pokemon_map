@@ -27,8 +27,8 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 def show_all_pokemons(request):
     current_time = localtime()
     pokemons = Pokemon.objects.filter(
-        pokemonentity__appeared_at__lte=current_time,
-        pokemonentity__disappeared_at__gt=current_time
+        entities__appeared_at__lte=current_time,
+        entities__disappeared_at__gt=current_time
     )
     pokemon_entities = PokemonEntity.objects.filter(
         pokemon__in=pokemons,
@@ -42,7 +42,9 @@ def show_all_pokemons(request):
                 folium_map,
                 pokemon_entity.lat,
                 pokemon_entity.lon,
-                request.build_absolute_uri(pokemon_entity.pokemon.image.url)
+                request.build_absolute_uri(
+                    pokemon_entity.pokemon.image.url
+                )
             )
     pokemons_on_page = []
     for pokemon in pokemons:
@@ -50,7 +52,9 @@ def show_all_pokemons(request):
             pokemons_on_page.append(
                 {
                 'pokemon_id': pokemon.id,
-                'img_url': request.build_absolute_uri(pokemon.image.url),
+                'img_url': request.build_absolute_uri(
+                    pokemon.image.url
+                ),
                 'title_ru': pokemon.title_ru,
                 }
             )
@@ -66,38 +70,57 @@ def show_all_pokemons(request):
 
 def show_pokemon(request, pokemon_id):
     pokemon = Pokemon.objects.get(id=pokemon_id)
-    pokemon_entities = PokemonEntity.objects.filter(pokemon_id=pokemon_id)
+    pokemon_entities = PokemonEntity.objects.filter(
+        pokemon_id=pokemon_id
+    )
     if pokemon.id == int(pokemon_id):
         previous_evolution = pokemon.previous_evolution
         next_evolution = pokemon.next_evolutions.first()
     else:
-        return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
-    requested_pokemon = {}
-    requested_pokemon['pokemon_id'] = pokemon.id
-    requested_pokemon['title_ru'] = pokemon.title_ru
-    requested_pokemon['title_en'] = pokemon.title_en
-    requested_pokemon['title_jp'] = pokemon.title_jp
-    requested_pokemon['description'] = pokemon.description
-    requested_pokemon['img_url'] = pokemon.image.url
+        return HttpResponseNotFound(
+            '<h1>Такой покемон не найден</h1>'
+        )
+
+    requested_pokemon = {
+        'pokemon_id': pokemon.id,
+        'title_ru': pokemon.title_ru,
+        'title_en': pokemon.title_en,
+        'title_jp': pokemon.title_jp,
+        'description': pokemon.description,
+        'img_url': pokemon.image.url,
+    }
+
     if previous_evolution:
-        requested_pokemon['previous_evolution'] = {
-            'title_ru': previous_evolution.title_ru,
-            'pokemon_id': previous_evolution.id,
-            'img_url': previous_evolution.image.url
-        }
+        requested_pokemon.update(
+            {
+                'previous_evolution': {
+                    'title_ru': previous_evolution.title_ru,
+                    'pokemon_id': previous_evolution.id,
+                    'img_url': previous_evolution.image.url,
+                },
+            }
+        )
+
     if next_evolution:
-        requested_pokemon['next_evolution'] = {
-            'title_ru': next_evolution.title_ru,
-            'pokemon_id': next_evolution.id,
-            'img_url': next_evolution.image.url
-        }
+        requested_pokemon.update(
+            {
+                'next_evolution': {
+                    'title_ru': next_evolution.title_ru,
+                    'pokemon_id': next_evolution.id,
+                    'img_url': next_evolution.image.url,
+                },
+            }
+        )
+
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in pokemon_entities:
         add_pokemon(
             folium_map,
             pokemon_entity.lat,
             pokemon_entity.lon,
-            request.build_absolute_uri(pokemon_entity.pokemon.image.url)
+            request.build_absolute_uri(
+                pokemon_entity.pokemon.image.url
+            )
         )
 
     return render(
