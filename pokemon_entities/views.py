@@ -63,7 +63,7 @@ def show_all_pokemons(request):
         'mainpage.html',
         context={
             'map': folium_map._repr_html_(),
-            'pokemons': pokemons_without_duplicates,
+            'pokemons': pokemons_on_page,
         }
     )
 
