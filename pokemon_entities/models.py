@@ -9,10 +9,12 @@ class Pokemon(models.Model):
     title_en = models.CharField(
         max_length=200,
         verbose_name='Название покемона (анг.)',
+        blank=True, null=True,
     )
     title_jp = models.CharField(
         max_length=200,
         verbose_name='Название покемона (яп.)',
+        blank=True, null=True,
     )
     description = models.TextField(
         verbose_name='Описание',
@@ -21,7 +23,7 @@ class Pokemon(models.Model):
     image = models.ImageField(
         upload_to='pokemons',
         verbose_name='Изображение',
-        blank=True,
+        blank=True, null=True,
     )
     img_url = models.URLField(
         verbose_name='Ссылка на изображение',
@@ -31,14 +33,13 @@ class Pokemon(models.Model):
         'self',
         verbose_name='Из кого эволюционировал',
         related_name='next_evolutions',
-        blank=True,
-        null=True,
+        blank=True, null=True,
         on_delete=models.SET_NULL,
     )
 
     class Meta:
         verbose_name_plural = 'Типы покемонов'
-        ordering = ['title_ru']
+        ordering = ['id']
 
     def __str__(self):
         return self.title_ru
