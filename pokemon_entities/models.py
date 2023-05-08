@@ -52,10 +52,10 @@ class PokemonEntity(models.Model):
         related_name='entities',
     )
     lat = models.FloatField(
-        null=False, verbose_name='Широта',
+        verbose_name='Широта',
     )
     lon = models.FloatField(
-        null=False, verbose_name='Долгота',
+        verbose_name='Долгота',
     )
     appeared_at = models.DateTimeField(
         verbose_name='Создан',
